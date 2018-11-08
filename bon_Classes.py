@@ -2,10 +2,12 @@ from getpass import getpass
 
 
 class Account:
-    def __init__(self):
+    def __init__(self, account_num):
+        self.account_id = account_num
         self.balance = 0
         self.withdrawls = 0
         self.deposits = 0
+        self.interest = 0
 
     def withdraw(self, amount):
         if amount < 0:
@@ -43,23 +45,44 @@ class Savings(Account):
 
 
 class Customer:
-    unique_id = 1000
+    customer_id = 1000
+    customers = dict()
 
-    def __init__(self, first_name, last_name, username):
+    def __init__(self, first_name, last_name, username, age):
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
+        self.age = age
+        self.id = Customer.customer_id
+        self.accounts = dict()
+        if username in Customer.customers:
+            print("Username taken.")
+            return None
         self.password = self.get_password()
-        self.id = Customer.unique_id
-        Customer.unique_id += 1
+        Customer.customers.update({username: self})
+        Customer.customer_id += 1
 
     def get_password(self):
         pw_prompt = "Please enter a password.\n>"
         pw_confirm = "Please confirm your password.\n>"
         while True:
-            first_attempt = hash(getpass(pw_prompt))
-            confirmation = hash(getpass(pw_confirm))
-            if first_attempt is None or confirmation is None:
-                print("Password cannot be empty.")
-            elif first_attempt == confirmation:
-                return confirmation
+            try:
+                first_attempt = hash(getpass(pw_prompt))
+                confirmation = hash(getpass(pw_confirm))
+                if not first_attempt or not confirmation:
+                    print("Password cannot be empty.")
+                elif first_attempt == confirmation:
+                    return confirmation
+                else:
+                    print("Passwords do not match. Try Again.")
+            except (KeyboardInterrupt, EOFError):
+                #Passing silently to not allow account without password
+                pass
+
+    def __str__(self):
+        output = "Name: {} {}\nAge: {}Id: {}"
+        return output.format(self.first_name, self.last_name, self.age, self.id)
+
+class CurrentState:
+    pass
+# will be used to save and load accounts
