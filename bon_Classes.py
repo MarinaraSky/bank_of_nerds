@@ -25,6 +25,23 @@ class Account:
         self.balance += amount
         self.deposits += 1
 
+class Checking(Account):
+    checking_id = 10000000
+
+    def __init__(self):
+        super().__init__(Checking.checking_id)
+        Checking.checking_id += 1
+
+
+class Savings(Account):
+    savings_id = 10000000
+
+    def __init__(self):
+        super().__init__(Savings.savings_id)
+        Savings.savings_id += 1
+        self.interest = 0.05
+
+
 class Customer:
     unique_id = 1000
 
