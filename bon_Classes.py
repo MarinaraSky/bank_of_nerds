@@ -16,7 +16,9 @@ class Account:
             return
         withdrawn = self.balance - amount
         if withdrawn < 0:
-            print("Negative Compadre.")
+            print("You will incur over draft fees of 35$.")
+            withdrawn -= 35
+            self.balance = withdrawn
         else:
             self.balance = withdrawn
             self.withdrawls += 1
