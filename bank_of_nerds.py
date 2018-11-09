@@ -3,13 +3,14 @@ import bon_Classes as bon
 from getpass import getpass
 import hashlib
 import pickle
-import os
 
 
+# Global stirng used to reset terminal
 clear_screen = "\033c"
 
 
 def main():
+    '''Main driver for bank of nerds'''
     startup()
     print(clear_screen)
     main_loop = True
@@ -19,6 +20,8 @@ def main():
 
 
 def menu_loop():
+    '''Main menu loop that will return True if user wants to
+    interact with another customer and False to exit'''
     loop = True
     while loop:
         login_options = {'1': user_login, '2': new_customer,
@@ -36,6 +39,7 @@ def menu_loop():
                 break
         except KeyError:
             print("Not a Valid option.")
+    # instantiating customer for clarity
     customer = loop
     loop = True
     while loop:
@@ -44,6 +48,7 @@ def menu_loop():
         print(clear_screen)
     another = "Would you like to return to the main menu(Y/N)?\n>"
     selection = my_input(another)
+    # Really only care if user puts in y or Y
     if selection.upper() == "Y":
         return True
     else:
@@ -51,6 +56,9 @@ def menu_loop():
 
 
 def startup():
+    '''Startup function that will read the database in
+    and set account and user id's, or create default
+    users as required.'''
     loaded = [0, 0, 0, 0, None]
     try:
         file = open(".bon_database.jack", "rb")
@@ -84,6 +92,8 @@ def startup():
 
 
 def shutdown():
+    '''Saves the database with the current id's for accounts and
+    customers.'''
     saving = [bon.Checking.checking_id, bon.Savings.savings_id,
               bon.Customer.customer_id, bon.FourOhOneK.four_oh_one_k_id,
               bon.Customer.customers]
@@ -92,6 +102,7 @@ def shutdown():
 
 
 def list_users():
+    '''Used to list users from main menu.'''
     for customer in bon.Customer.customers:
         print("Customer", bon.Customer.customers[customer])
         list_accounts(bon.Customer.customers[customer].accounts['Checking'])
@@ -104,6 +115,7 @@ def list_users():
 
 
 def new_customer():
+    '''Prompts the user for required fields to make a new user.'''
     first_name_prompt = "Please enter your first name.\n>"
     last_name_prompt = "Please enter your last name.\n>"
     username_prompt = "Please enter your desired username.\n>"
@@ -127,6 +139,9 @@ def new_customer():
 
 
 def user_login():
+    '''Checks in the Customer.customers dictionary for submitted username
+    and will prompt for their password. Will log the user in if username and
+    password match'''
     login_prompt = "Please enter your user ID.\n>"
     password_prompt = "Please enter your password.\n>"
     error_prompt = "Cannot log in.\n"
@@ -145,6 +160,8 @@ def user_login():
 
 
 def account_management(selected_customer):
+    '''Takes the customer object found after logging in and will prompt
+    the user with the account management menu.'''
     account_prompt = "1) New Checking\n2) New Savings\n3) New 401k\n" \
                      "4) Deposit Checking\n5) Savings Deposit\n" \
                      "6) Deposit 401k\n7) Checking Withdraw\n" \
@@ -182,8 +199,11 @@ def account_management(selected_customer):
 
 
 def account_withdraw(customer, account_type):
+    '''Takes the customer object from account management and the type of
+    account to withdraw money from that account.'''
     list_accounts(customer.accounts[account_type])
     selected, amount = get_amount()
+    # Check to verify user can withdraw from 401k
     if account_type == '401k' and customer.age < 67:
         print("Cannont withdraw from 401k until 67 years old.")
         return False
@@ -194,6 +214,8 @@ def account_withdraw(customer, account_type):
 
 
 def account_deposit(customer, account_type):
+    '''Takes the customer object from account management and the type of
+    account to deposit money from that account.'''
     list_accounts(customer.accounts[account_type])
     selected, amount = get_amount()
     try:
@@ -203,6 +225,8 @@ def account_deposit(customer, account_type):
 
 
 def get_amount():
+    '''Prompts the user to enter the account and the amount of money
+    they'd like to change the account by.'''
     account_prompt = "Which account? "
     amount_prompt = "How much money? "
     selected_account = my_input(account_prompt)
@@ -214,11 +238,16 @@ def get_amount():
 
 
 def list_accounts(customer_accounts):
+    '''Simple function to list all accounts of a particular type
+    specified by the customer_accounts paramenter'''
     for account in customer_accounts:
         print(customer_accounts[account])
 
 
 def my_input(prompt):
+    '''Takes a prompt and will use the builtin input() to ask the
+    user for information requested in the prompt. Made this because
+    it would reduce the amount of try and excepts I needed to type'''
     while True:
         try:
             attempt = input(prompt)
@@ -228,8 +257,11 @@ def my_input(prompt):
 
 
 class MyUnpickler(pickle.Unpickler):
+    '''Unpickler subclass used to not allow os commands to be
+    hidden in my pickled file'''
 
     def find_class(self, module, name):
+        # Check if os objects had been pickled
         if module == "posix":
             raise pickle.UnpicklingError
         return getattr(bon, name)
