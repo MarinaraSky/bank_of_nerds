@@ -12,6 +12,7 @@ def main():
         try:
             selection = login_options[my_input(login_menu)]
             loop = selection()
+            # Used to end loop if customer is found
             if isinstance(loop, Customer):
                 break
         except KeyError:
@@ -51,13 +52,15 @@ def user_login():
             return Customer.customers[login_attempt]
         else:
             print("Fail")
+            return True
     except KeyError:
         print(error_prompt)
-        return False
+        return True
 
 def account_management(selected_customer):
     account_prompt = "1) New Checking\n2) New Savings\n3) Deposit Checking\n" \
-            "4) Savings Deposit\n9) Exit\n>"
+            "4) Savings Deposit\n5) Checking Withdraw\n6) Savings Withdraw\n" \
+            "7) List Balances\n9) Exit\n>"
     account_input = my_input(account_prompt)
     if account_input == "9":
         return False
@@ -69,10 +72,35 @@ def account_management(selected_customer):
         checking_deposit(selected_customer)
     elif account_input == "4":
         savings_deposit(selected_customer)
+    elif account_input == "5":
+        checking_withdraw(selected_customer)
+    elif account_input == "6":
+        savings_withdraw(selected_customer)
+    elif account_input == "7":
+        list_accounts(selected_customer.accounts['Checking'])
+        list_accounts(selected_customer.accounts['Savings'])
+
     return True
+
+def checking_withdraw(customer):
+    list_accounts(customer.accounts['Checking'])
+    selected, amount = get_amount()
+    try:
+        customer.accounts['Checking'][selected].withdraw(amount)
+    except KeyError:
+        print("Cannont find that account.")
+
+def savings_withdraw(customer):
+    list_accounts(customer.accounts['Savings'])
+    selected, amount = get_amount()
+    try:
+        customer.accounts['Savings'][selected].withdraw(amount)
+    except KeyError:
+        print("Cannont find that account.")
 
 def checking_deposit(customer):
     list_accounts(customer.accounts['Checking'])
+    selected, amount = get_amount()
     try:
         customer.accounts['Checking'][selected].deposit(amount)
     except KeyError:
@@ -80,22 +108,25 @@ def checking_deposit(customer):
 
 def savings_deposit(customer):
     list_accounts(customer.accounts['Savings'])
+    selected, amount = get_amount()
     try:
         customer.accounts['Savings'][selected].deposit(amount)
     except KeyError:
         print("Cannont find that account.")
 
-def list_accounts(customer_accounts):
+def get_amount():
     account_prompt = "Which account? "
     amount_prompt = "How much money? "
-    for account in customer_accounts:
-        print(account)
     selected_account = my_input(account_prompt)
     amount = my_input(amount_prompt)
     try:
         return int(selected_account), float(amount)
     except ValueError:
         return None, None
+
+def list_accounts(customer_accounts):
+    for account in customer_accounts:
+        print(customer_accounts[account])
 
 def my_input(prompt):
     while True:
