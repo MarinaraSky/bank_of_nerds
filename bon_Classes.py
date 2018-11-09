@@ -27,6 +27,11 @@ class Account:
         self.balance += amount
         self.deposits += 1
 
+    def __str__(self, type_of_account):
+        acc_string = "{0} account: {1} \n   Balance: ${2:.2f}".format(
+                     type_of_account, self.account_id, self.balance)
+        return acc_string
+
 class Checking(Account):
     checking_id = 10000000
 
@@ -34,6 +39,8 @@ class Checking(Account):
         super().__init__(Checking.checking_id)
         Checking.checking_id += 1
 
+    def __str__(self):
+        return super().__str__("Checking")
 
 class Savings(Account):
     savings_id = 10000000
@@ -43,6 +50,8 @@ class Savings(Account):
         Savings.savings_id += 1
         self.interest = 0.05
 
+    def __str__(self):
+        return super().__str__("Savings")
 
 class Customer:
     customer_id = 1000
