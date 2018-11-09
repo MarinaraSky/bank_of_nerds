@@ -8,8 +8,10 @@ def main():
     startup()
     loop = True
     while loop:
-        login_options = {'1': user_login, '2': new_customer, '9': None}
-        login_menu = "1) Existing Customer.\n2) New User.\n9) Quit.\n>"
+        login_options = {'1': user_login, '2': new_customer,
+                         '3': list_users, '9': None}
+        login_menu = "1) Existing Customer.\n2) New User.\n" \
+                     "3) List Users\n9) Quit.\n>"
         try:
             selection = login_options[my_input(login_menu)]
             if selection is None:
@@ -47,6 +49,16 @@ def shutdown():
               Customer.customers]
     with open(".bon_database.jack", "w+b") as file:
         pickle.dump(saving, file)
+
+
+def list_users():
+    for customer in Customer.customers:
+        print(customer)
+        list_accounts(Customer.customers[customer].accounts['Checking'])
+        list_accounts(Customer.customers[customer].accounts['Savings'])
+
+    my_input("Enter to Continue.")
+    return True
 
 
 def new_customer():
