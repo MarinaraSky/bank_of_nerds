@@ -1,14 +1,20 @@
 from bon_Classes import Checking, Savings, Customer
 from getpass import getpass
+import hashlib
+import pickle
 
 
 def main():
+    startup()
     loop = True
     while loop:
-        login_options = {'1': user_login, '2': new_customer, '9': exit}
+        login_options = {'1': user_login, '2': new_customer, '9': None}
         login_menu = "1) Existing Customer.\n2) New User.\n9) Quit.\n>"
         try:
             selection = login_options[my_input(login_menu)]
+            if selection == None:
+                shutdown()
+                return
             loop = selection()
             # Used to end loop if customer is found
             if isinstance(loop, Customer):
@@ -19,6 +25,27 @@ def main():
     loop = True
     while loop:
         loop = account_management(customer)
+    shutdown()
+
+
+def startup():
+    loaded = [0, 0, 0, None]
+    try:
+        file = open(".bon_database.jack", "rb")
+        loaded = pickle.load(file)
+        file.close()
+        Checking.checking_id = loaded[0]
+        Savings.savings_id = loaded[1]
+        Customer.customer_id = loaded[2]
+        Customer.customers = loaded[3]
+    except FileNotFoundError: # Silently continue with default numbers
+        pass
+
+def shutdown():
+    saving = [Checking.checking_id, Savings.savings_id, Customer.customer_id,
+              Customer.customers]
+    with open(".bon_database.jack", "w+b") as file:
+        pickle.dump(saving, file)
 
 
 def new_customer():
@@ -46,8 +73,8 @@ def user_login():
     error_prompt = "Cannot log in.\n"
     login_attempt = my_input(login_prompt)
     try:
-        if Customer.customers[login_attempt].password == hash(
-                getpass(password_prompt)):
+        if Customer.customers[login_attempt].password == hashlib.md5(
+                getpass(password_prompt).encode("utf-8")).hexdigest():
             print("Success")
             return Customer.customers[login_attempt]
         else:

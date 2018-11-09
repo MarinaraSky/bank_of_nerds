@@ -1,4 +1,5 @@
 from getpass import getpass
+import hashlib
 
 
 class Account:
@@ -79,12 +80,13 @@ class Customer:
         pw_confirm = "Please confirm your password.\n>"
         while True:
             try:
-                first_attempt = hash(getpass(pw_prompt))
-                confirmation = hash(getpass(pw_confirm))
+                first_attempt = getpass(pw_prompt)
+                confirmation = getpass(pw_confirm)
                 if not first_attempt or not confirmation:
                     print("Password cannot be empty.")
                 elif first_attempt == confirmation:
-                    return confirmation
+                    digest = hashlib.md5(confirmation.encode("utf-8")).hexdigest()
+                    return digest
                 else:
                     print("Passwords do not match. Try Again.")
             except (KeyboardInterrupt, EOFError):
