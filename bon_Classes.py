@@ -6,7 +6,7 @@ class Account:
     def __init__(self, account_num):
         self.account_id = account_num
         self.balance = 0
-        self.withdrawls = 0
+        self.withdraws = 0
         self.deposits = 0
         self.interest = 0
 
@@ -16,10 +16,12 @@ class Account:
             return
         withdrawn = self.balance - amount
         if withdrawn < 0:
-            print("Negative Compadre.")
+            print("You will incur over draft fees of 35$.")
+            withdrawn -= 35
+            self.balance = withdrawn
         else:
             self.balance = withdrawn
-            self.withdrawls += 1
+            self.withdraws += 1
 
     def deposit(self, amount):
         if amount < 0:
@@ -29,8 +31,12 @@ class Account:
         self.deposits += 1
 
     def __str__(self, type_of_account):
-        acc_string = "{0} account: {1} \n   Balance: ${2:.2f}".format(
-                     type_of_account, self.account_id, self.balance)
+        acc_string = "{0} account: {1} \n   Balance: ${2:.2f}\n   " \
+                     "Interest: {3}%\n   Withdraws: {4}\n   " \
+                     "Deposits: {5}".format(
+                        type_of_account, self.account_id,
+                        self.balance, float(self.interest) * 100,
+                        self.withdraws, self.deposits)
         return acc_string
 
 
@@ -39,6 +45,7 @@ class Checking(Account):
 
     def __init__(self):
         super().__init__(Checking.checking_id)
+        print("Checking", Checking.checking_id)
         Checking.checking_id += 1
 
     def __str__(self):
@@ -50,6 +57,7 @@ class Savings(Account):
 
     def __init__(self):
         super().__init__(Savings.savings_id)
+        print("Savings", Savings.savings_id)
         Savings.savings_id += 1
         self.interest = 0.05
 
@@ -61,8 +69,8 @@ class FourOhOneK(Account):
     four_oh_one_k_id = 10000000
 
     def __init__(self):
-        super().__init__(Savings.savings_id)
-        Savings.savings_id += 1
+        super().__init__(FourOhOneK.four_oh_one_k_id)
+        FourOhOneK.four_oh_one_k_id += 1
         self.interest = 0.05
 
     def __str__(self):
