@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 from bon_Classes import Checking, Savings, Customer
 from getpass import getpass
 import hashlib

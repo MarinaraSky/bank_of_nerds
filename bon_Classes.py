@@ -98,8 +98,3 @@ class Customer:
         output = "Name: {} {}\nAge: {}\nId: {}"
         return output.format(
                 self.first_name, self.last_name, self.age, self.id)
-
-
-class CurrentState:
-    pass
-# will be used to save and load accounts
