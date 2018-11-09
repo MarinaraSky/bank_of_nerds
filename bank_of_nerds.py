@@ -142,17 +142,17 @@ def account_management(selected_customer):
         selected_customer.accounts['401k'].update(
                 {FourOhOneK.four_oh_one_k_id: FourOhOneK()})
     elif account_input == "4":
-        checking_deposit(selected_customer)
+        account_deposit(selected_customer, 'Checking')
     elif account_input == "5":
-        savings_deposit(selected_customer)
+        account_deposit(selected_customer, 'Savings')
     elif account_input == "6":
-        four_oh_one_k_deposit(selected_customer)
+        account_deposit(selected_customer, '401k')
     elif account_input == "7":
-        checking_withdraw(selected_customer)
+        account_withdraw(selected_customer, 'Checking')
     elif account_input == "8":
-        savings_withdraw(selected_customer)
+        account_withdraw(selected_customer, 'Savings')
     elif account_input == "9":
-        four_oh_one_k_withdraw(selected_customer)
+        account_withdraw(selected_customer, '401k')
     elif account_input == "10":
         list_accounts(selected_customer.accounts['Checking'])
         list_accounts(selected_customer.accounts['Savings'])
@@ -160,59 +160,23 @@ def account_management(selected_customer):
     return True
 
 
-def checking_withdraw(customer):
-    list_accounts(customer.accounts['Checking'])
+def account_withdraw(customer, account_type):
+    list_accounts(customer.accounts[account_type])
     selected, amount = get_amount()
+    if account_type == '401k' and customer.age < 67:
+        print("Cannont withdraw from 401k until 67 years old.")
+        return False
     try:
-        customer.accounts['Checking'][selected].withdraw(amount)
+        customer.accounts[account_type][selected].withdraw(amount)
     except KeyError:
         print("Cannont find that account.")
 
 
-def savings_withdraw(customer):
-    list_accounts(customer.accounts['Savings'])
+def account_deposit(customer, account_type):
+    list_accounts(customer.accounts[account_type])
     selected, amount = get_amount()
     try:
-        customer.accounts['Savings'][selected].withdraw(amount)
-    except KeyError:
-        print("Cannont find that account.")
-
-
-def four_oh_one_k_withdraw(customer):
-    list_accounts(customer.accounts['401k'])
-    if customer.age < 67:
-        print("Too young to withdraw from 401k.")
-        return
-    selected, amount = get_amount()
-    try:
-        customer.accounts['401k'][selected].withdraw(amount)
-    except KeyError:
-        print("Cannont find that account.")
-
-
-def four_oh_one_k_deposit(customer):
-    list_accounts(customer.accounts['401k'])
-    selected, amount = get_amount()
-    try:
-        customer.accounts['401k'][selected].deposit(amount)
-    except KeyError:
-        print("Cannont find that account.")
-
-
-def checking_deposit(customer):
-    list_accounts(customer.accounts['Checking'])
-    selected, amount = get_amount()
-    try:
-        customer.accounts['Checking'][selected].deposit(amount)
-    except KeyError:
-        print("Cannont find that account.")
-
-
-def savings_deposit(customer):
-    list_accounts(customer.accounts['Savings'])
-    selected, amount = get_amount()
-    try:
-        customer.accounts['Savings'][selected].deposit(amount)
+        customer.accounts[account_type][selected].deposit(amount)
     except KeyError:
         print("Cannont find that account.")
 
