@@ -3,7 +3,6 @@ import bon_Classes as bon
 from getpass import getpass
 import hashlib
 import pickle
-import os
 
 
 # Global stirng used to reset terminal
