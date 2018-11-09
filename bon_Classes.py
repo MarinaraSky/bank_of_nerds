@@ -6,7 +6,7 @@ class Account:
     def __init__(self, account_num):
         self.account_id = account_num
         self.balance = 0
-        self.withdrawls = 0
+        self.withdraws = 0
         self.deposits = 0
         self.interest = 0
 
@@ -21,7 +21,7 @@ class Account:
             self.balance = withdrawn
         else:
             self.balance = withdrawn
-            self.withdrawls += 1
+            self.withdraws += 1
 
     def deposit(self, amount):
         if amount < 0:
@@ -31,8 +31,11 @@ class Account:
         self.deposits += 1
 
     def __str__(self, type_of_account):
-        acc_string = "{0} account: {1} \n   Balance: ${2:.2f}".format(
-                     type_of_account, self.account_id, self.balance)
+        acc_string = "{0} account: {1} \n   Balance: ${2:.2f}\n   " \
+                     "Interest: {3}%\n   Withdraws: {4}\n   " \
+                     "Deposits: {5}".format(
+                     type_of_account, self.account_id, self.balance,
+                     float(self.interest) * 100, self.withdraws, self.deposits)
         return acc_string
 
 

@@ -67,7 +67,7 @@ def startup():
         bon.FourOhOneK.four_oh_one_k_id = loaded[3]
         bon.Customer.customers = loaded[4]
     except FileNotFoundError:  # Create Default accounts
-        dave = bon.Customer("Dave", "Flagnagan", "d.flan", 21)
+        dave = bon.Customer("Dave", "Flanagan", "d.flan", 21)
         jack = bon.Customer("Jack", "Spence", "j.spen", 99)
         dave.accounts['Checking'].update(
                 {bon.Checking.checking_id: bon.Checking()})
