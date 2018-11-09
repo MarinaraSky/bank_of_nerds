@@ -41,6 +41,7 @@ class Checking(Account):
 
     def __init__(self):
         super().__init__(Checking.checking_id)
+        print("Checking", Checking.checking_id)
         Checking.checking_id += 1
 
     def __str__(self):
@@ -52,6 +53,7 @@ class Savings(Account):
 
     def __init__(self):
         super().__init__(Savings.savings_id)
+        print("Savings", Savings.savings_id)
         Savings.savings_id += 1
         self.interest = 0.05
 
@@ -63,8 +65,8 @@ class FourOhOneK(Account):
     four_oh_one_k_id = 10000000
 
     def __init__(self):
-        super().__init__(Savings.savings_id)
-        Savings.savings_id += 1
+        super().__init__(FourOhOneK.four_oh_one_k_id)
+        FourOhOneK.four_oh_one_k_id += 1
         self.interest = 0.05
 
     def __str__(self):

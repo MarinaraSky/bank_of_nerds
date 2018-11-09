@@ -22,11 +22,11 @@ def menu_loop():
     loop = True
     while loop:
         login_options = {'1': user_login, '2': new_customer,
-                         '3': list_users, '9': None}
+                         '3': list_users, 'Q': None}
         login_menu = "1) Existing Customer.\n2) New User.\n" \
-                     "3) List Users\n9) Quit.\n>"
+                     "3) List Users\nQ) Quit.\n>"
         try:
-            selection = login_options[my_input(login_menu)]
+            selection = login_options[my_input(login_menu).upper()]
             if selection is None:
                 shutdown()
                 return
@@ -69,6 +69,18 @@ def startup():
     except FileNotFoundError:  # Create Default accounts
         dave = bon.Customer("Dave", "Flagnagan", "d.flan", 21)
         jack = bon.Customer("Jack", "Spence", "j.spen", 99)
+        dave.accounts['Checking'].update(
+                {bon.Checking.checking_id: bon.Checking()})
+        dave.accounts['Savings'].update(
+                {bon.Savings.savings_id: bon.Savings()})
+        dave.accounts['401k'].update(
+                {bon.FourOhOneK.four_oh_one_k_id: bon.FourOhOneK()})
+        jack.accounts['Checking'].update(
+                {bon.Checking.checking_id: bon.Checking()})
+        jack.accounts['Savings'].update(
+                {bon.Savings.savings_id: bon.Savings()})
+        jack.accounts['401k'].update(
+                {bon.FourOhOneK.four_oh_one_k_id: bon.FourOhOneK()})
 
 
 def shutdown():
