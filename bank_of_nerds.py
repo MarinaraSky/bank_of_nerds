@@ -8,6 +8,7 @@ import os
 
 clear_screen = "\033c"
 
+
 def main():
     startup()
     print(clear_screen)
