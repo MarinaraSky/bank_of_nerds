@@ -141,6 +141,7 @@ class Customer:
 
     def __str__(self):
         '''String representation of a Customer()'''
-        output = "Name: {} {}\nAge: {}\nId: {}"
+        output = "Name: {} {}\nAge: {}\nId: {}\nUsername: {}"
         return output.format(
-                self.first_name, self.last_name, self.age, self.id)
+                self.first_name, self.last_name,
+                self.age, self.id, self.username)
