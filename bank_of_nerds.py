@@ -4,8 +4,18 @@ import hashlib
 import pickle
 
 
+clear_screen = "\033c"
+
 def main():
     startup()
+    print(clear_screen)
+    main_loop = True
+    while main_loop:
+        main_loop = menu_loop()
+    shutdown()
+
+
+def menu_loop():
     loop = True
     while loop:
         login_options = {'1': user_login, '2': new_customer,
@@ -27,7 +37,14 @@ def main():
     loop = True
     while loop:
         loop = account_management(customer)
-    shutdown()
+        my_input("Enter to Continue.")
+        print(clear_screen)
+    another = "Would you like to return to the main menu(Y/N)?\n>"
+    selection = my_input(another)
+    if selection.upper() == "Y":
+        return True
+    else:
+        return False
 
 
 def startup():
@@ -53,11 +70,12 @@ def shutdown():
 
 def list_users():
     for customer in Customer.customers:
-        print(customer)
+        print("Customer", Customer.customers[customer])
         list_accounts(Customer.customers[customer].accounts['Checking'])
         list_accounts(Customer.customers[customer].accounts['Savings'])
 
     my_input("Enter to Continue.")
+    print(clear_screen)
     return True
 
 
