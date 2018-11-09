@@ -1,14 +1,33 @@
+#! /usr/bin/env python3
 from bon_Classes import Checking, Savings, Customer
 from getpass import getpass
+import hashlib
+import pickle
 
+
+clear_screen = "\033c"
 
 def main():
+    startup()
+    print(clear_screen)
+    main_loop = True
+    while main_loop:
+        main_loop = menu_loop()
+    shutdown()
+
+
+def menu_loop():
     loop = True
     while loop:
-        login_options = {'1': user_login, '2': new_customer, '9': exit}
-        login_menu = "1) Existing Customer.\n2) New User.\n9) Quit.\n>"
+        login_options = {'1': user_login, '2': new_customer,
+                         '3': list_users, '9': None}
+        login_menu = "1) Existing Customer.\n2) New User.\n" \
+                     "3) List Users\n9) Quit.\n>"
         try:
             selection = login_options[my_input(login_menu)]
+            if selection is None:
+                shutdown()
+                return
             loop = selection()
             # Used to end loop if customer is found
             if isinstance(loop, Customer):
@@ -19,6 +38,46 @@ def main():
     loop = True
     while loop:
         loop = account_management(customer)
+        my_input("Enter to Continue.")
+        print(clear_screen)
+    another = "Would you like to return to the main menu(Y/N)?\n>"
+    selection = my_input(another)
+    if selection.upper() == "Y":
+        return True
+    else:
+        return False
+
+
+def startup():
+    loaded = [0, 0, 0, None]
+    try:
+        file = open(".bon_database.jack", "rb")
+        loaded = pickle.load(file)
+        file.close()
+        Checking.checking_id = loaded[0]
+        Savings.savings_id = loaded[1]
+        Customer.customer_id = loaded[2]
+        Customer.customers = loaded[3]
+    except FileNotFoundError:  # Silently continue with default numbers
+        pass
+
+
+def shutdown():
+    saving = [Checking.checking_id, Savings.savings_id, Customer.customer_id,
+              Customer.customers]
+    with open(".bon_database.jack", "w+b") as file:
+        pickle.dump(saving, file)
+
+
+def list_users():
+    for customer in Customer.customers:
+        print("Customer", Customer.customers[customer])
+        list_accounts(Customer.customers[customer].accounts['Checking'])
+        list_accounts(Customer.customers[customer].accounts['Savings'])
+
+    my_input("Enter to Continue.")
+    print(clear_screen)
+    return True
 
 
 def new_customer():
@@ -46,8 +105,8 @@ def user_login():
     error_prompt = "Cannot log in.\n"
     login_attempt = my_input(login_prompt)
     try:
-        if Customer.customers[login_attempt].password == hash(
-                getpass(password_prompt)):
+        if Customer.customers[login_attempt].password == hashlib.md5(
+                getpass(password_prompt).encode("utf-8")).hexdigest():
             print("Success")
             return Customer.customers[login_attempt]
         else:
