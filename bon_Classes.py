@@ -34,8 +34,9 @@ class Account:
         acc_string = "{0} account: {1} \n   Balance: ${2:.2f}\n   " \
                      "Interest: {3}%\n   Withdraws: {4}\n   " \
                      "Deposits: {5}".format(
-                     type_of_account, self.account_id, self.balance,
-                     float(self.interest) * 100, self.withdraws, self.deposits)
+                        type_of_account, self.account_id,
+                        self.balance, float(self.interest) * 100,
+                        self.withdraws, self.deposits)
         return acc_string
 
 
