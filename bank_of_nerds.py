@@ -1,8 +1,9 @@
 #! /usr/bin/env python3
-from bon_Classes import Checking, Savings, Customer, FourOhOneK
+import bon_Classes as bon
 from getpass import getpass
 import hashlib
 import pickle
+import os
 
 
 clear_screen = "\033c"
@@ -30,7 +31,7 @@ def menu_loop():
                 return
             loop = selection()
             # Used to end loop if customer is found
-            if isinstance(loop, Customer):
+            if isinstance(loop, bon.Customer):
                 break
         except KeyError:
             print("Not a Valid option.")
@@ -52,30 +53,37 @@ def startup():
     loaded = [0, 0, 0, 0, None]
     try:
         file = open(".bon_database.jack", "rb")
-        loaded = pickle.load(file)
+        try:
+            loaded = MyUnpickler(file).load()
+        except pickle.UnpicklingError:
+            print("Corrupted database.")
+            my_input("Enter to continue.")
+            raise FileNotFoundError
         file.close()
-        Checking.checking_id = loaded[0]
-        Savings.savings_id = loaded[1]
-        Customer.customer_id = loaded[2]
-        FourOhOneK.four_oh_one_k_id = loaded[3]
-        Customer.customers = loaded[4]
-    except FileNotFoundError:  # Silently continue with default numbers
-        pass
+        bon.Checking.checking_id = loaded[0]
+        bon.Savings.savings_id = loaded[1]
+        bon.Customer.customer_id = loaded[2]
+        bon.FourOhOneK.four_oh_one_k_id = loaded[3]
+        bon.Customer.customers = loaded[4]
+    except FileNotFoundError:  # Create Default accounts
+        dave = bon.Customer("Dave", "Flagnagan", "d.flan", 21)
+        jack = bon.Customer("Jack", "Spence", "j.spen", 99)
 
 
 def shutdown():
-    saving = [Checking.checking_id, Savings.savings_id, Customer.customer_id,
-              FourOhOneK.four_oh_one_k_id, Customer.customers]
+    saving = [bon.Checking.checking_id, bon.Savings.savings_id,
+              bon.Customer.customer_id, bon.FourOhOneK.four_oh_one_k_id,
+              bon.Customer.customers]
     with open(".bon_database.jack", "w+b") as file:
         pickle.dump(saving, file)
 
 
 def list_users():
-    for customer in Customer.customers:
-        print("Customer", Customer.customers[customer])
-        list_accounts(Customer.customers[customer].accounts['Checking'])
-        list_accounts(Customer.customers[customer].accounts['Savings'])
-        list_accounts(Customer.customers[customer].accounts['401k'])
+    for customer in bon.Customer.customers:
+        print("Customer", bon.Customer.customers[customer])
+        list_accounts(bon.Customer.customers[customer].accounts['Checking'])
+        list_accounts(bon.Customer.customers[customer].accounts['Savings'])
+        list_accounts(bon.Customer.customers[customer].accounts['401k'])
 
     my_input("Enter to Continue.")
     print(clear_screen)
@@ -97,7 +105,7 @@ def new_customer():
         print("Not a valid age.")
         return True
 
-    new = Customer(first_name, last_name, username, age)
+    new = bon.Customer(first_name, last_name, username, age)
     if new:
         # Loop Variable
         return True
@@ -111,10 +119,10 @@ def user_login():
     error_prompt = "Cannot log in.\n"
     login_attempt = my_input(login_prompt)
     try:
-        if Customer.customers[login_attempt].password == hashlib.md5(
+        if bon.Customer.customers[login_attempt].password == hashlib.md5(
                 getpass(password_prompt).encode("utf-8")).hexdigest():
             print("Success")
-            return Customer.customers[login_attempt]
+            return bon.Customer.customers[login_attempt]
         else:
             print("Fail")
             return True
@@ -134,13 +142,13 @@ def account_management(selected_customer):
         return False
     elif account_input == "1":
         selected_customer.accounts['Checking'].update(
-                {Checking.checking_id: Checking()})
+                {bon.Checking.checking_id: bon.Checking()})
     elif account_input == "2":
         selected_customer.accounts['Savings'].update(
-                {Savings.savings_id: Savings()})
+                {bon.Savings.savings_id: bon.Savings()})
     elif account_input == "3":
         selected_customer.accounts['401k'].update(
-                {FourOhOneK.four_oh_one_k_id: FourOhOneK()})
+                {bon.FourOhOneK.four_oh_one_k_id: bon.FourOhOneK()})
     elif account_input == "4":
         account_deposit(selected_customer, 'Checking')
     elif account_input == "5":
@@ -205,6 +213,13 @@ def my_input(prompt):
         except (KeyboardInterrupt, EOFError):
             print("\nRetry.")
 
+
+class MyUnpickler(pickle.Unpickler):
+
+    def find_class(self, module, name):
+        if module == "posix":
+            raise pickle.UnpicklingError
+        return getattr(bon, name)
 
 if __name__ == "__main__":
     main()
