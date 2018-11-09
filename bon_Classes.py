@@ -32,6 +32,7 @@ class Account:
                      type_of_account, self.account_id, self.balance)
         return acc_string
 
+
 class Checking(Account):
     checking_id = 10000000
 
@@ -41,6 +42,7 @@ class Checking(Account):
 
     def __str__(self):
         return super().__str__("Checking")
+
 
 class Savings(Account):
     savings_id = 10000000
@@ -52,6 +54,7 @@ class Savings(Account):
 
     def __str__(self):
         return super().__str__("Savings")
+
 
 class Customer:
     customer_id = 1000
@@ -85,12 +88,14 @@ class Customer:
                 else:
                     print("Passwords do not match. Try Again.")
             except (KeyboardInterrupt, EOFError):
-                #Passing silently to not allow account without password
+                # Passing silently to not allow account without password
                 pass
 
     def __str__(self):
         output = "Name: {} {}\nAge: {}\nId: {}"
-        return output.format(self.first_name, self.last_name, self.age, self.id)
+        return output.format(
+                self.first_name, self.last_name, self.age, self.id)
+
 
 class CurrentState:
     pass
