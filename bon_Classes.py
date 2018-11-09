@@ -85,7 +85,8 @@ class Customer:
                 if not first_attempt or not confirmation:
                     print("Password cannot be empty.")
                 elif first_attempt == confirmation:
-                    digest = hashlib.md5(confirmation.encode("utf-8")).hexdigest()
+                    digest = hashlib.md5(
+                            confirmation.encode("utf-8")).hexdigest()
                     return digest
                 else:
                     print("Passwords do not match. Try Again.")

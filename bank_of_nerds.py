@@ -12,7 +12,7 @@ def main():
         login_menu = "1) Existing Customer.\n2) New User.\n9) Quit.\n>"
         try:
             selection = login_options[my_input(login_menu)]
-            if selection == None:
+            if selection is None:
                 shutdown()
                 return
             loop = selection()
@@ -38,8 +38,9 @@ def startup():
         Savings.savings_id = loaded[1]
         Customer.customer_id = loaded[2]
         Customer.customers = loaded[3]
-    except FileNotFoundError: # Silently continue with default numbers
+    except FileNotFoundError:  # Silently continue with default numbers
         pass
+
 
 def shutdown():
     saving = [Checking.checking_id, Savings.savings_id, Customer.customer_id,
