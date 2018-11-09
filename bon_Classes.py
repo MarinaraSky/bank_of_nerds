@@ -57,6 +57,18 @@ class Savings(Account):
         return super().__str__("Savings")
 
 
+class FourOhOneK(Account):
+    four_oh_one_k_id = 10000000
+
+    def __init__(self):
+        super().__init__(Savings.savings_id)
+        Savings.savings_id += 1
+        self.interest = 0.05
+
+    def __str__(self):
+        return super().__str__("401k")
+
+
 class Customer:
     customer_id = 1000
     customers = dict()
@@ -67,7 +79,7 @@ class Customer:
         self.username = username
         self.age = age
         self.id = Customer.customer_id
-        self.accounts = {'Checking': {}, 'Savings': {}}
+        self.accounts = {'Checking': {}, 'Savings': {}, '401k': {}}
         if username in Customer.customers:
             print("Username taken.")
             return None
