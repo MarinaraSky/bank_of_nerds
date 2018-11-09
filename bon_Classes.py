@@ -54,7 +54,7 @@ class Customer:
         self.username = username
         self.age = age
         self.id = Customer.customer_id
-        self.accounts = dict()
+        self.accounts = {'Checking': {}, 'Savings': {}}
         if username in Customer.customers:
             print("Username taken.")
             return None
@@ -80,7 +80,7 @@ class Customer:
                 pass
 
     def __str__(self):
-        output = "Name: {} {}\nAge: {}Id: {}"
+        output = "Name: {} {}\nAge: {}\nId: {}"
         return output.format(self.first_name, self.last_name, self.age, self.id)
 
 class CurrentState:
